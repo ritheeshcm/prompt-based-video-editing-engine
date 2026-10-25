@@ -21,32 +21,19 @@ silently ignored.
 ## 🏗️ Project Structure
 
 ```
-ps2-video-engine/
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── gemini_editor.py    ← Gemini chat interpretation + edit-plan validation
-│   │   ├── gemini_video_editor.py ← Gemini Omni Flash video edits
-│   │   ├── prompt_parser.py    ← Validates and parses supported edit operations
-│   │   └── video_processor.py  ← FFmpeg command builder + runner
-│   ├── uploads/                ← Uploaded videos (auto-created)
-│   ├── outputs/                ← Processed videos (auto-created)
-│   ├── venv/                   ← Python virtual environment
-│   ├── main.py                 ← FastAPI app (all API routes)
-│   └── requirements.txt
-│
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   ├── UploadZone.tsx   ← Drag-and-drop video upload
-    │   │   ├── PromptBox.tsx    ← Prompt input with live preview
-    │   │   └── StatusPanel.tsx  ← Processing status + download
-    │   ├── App.tsx              ← Main app layout + workflow
-    │   ├── api.ts               ← Backend API client
-    │   ├── main.tsx             ← React entry point
-    │   └── index.css            ← Design system (dark mode)
-    ├── index.html
-    └── vite.config.ts
+prompt-based-video-editing-engine/
+├── app/                         ← Python editing and AI modules
+├── main.py                      ← FastAPI app (all API routes)
+├── requirements.txt
+├── test_*.py                    ← Backend unit tests
+├── src/                         ← React + TypeScript frontend
+│   ├── components/
+│   ├── App.tsx
+│   ├── api.ts
+│   └── main.tsx
+├── index.html
+├── package.json
+└── vite.config.ts
 ```
 
 ---
@@ -58,14 +45,13 @@ ps2-video-engine/
 - Python 3.10+
 - FFmpeg and FFprobe (both executables are required)
 
-If the project virtual environment or frontend dependencies are missing, create/install them once:
+From the repository root, create a Python virtual environment and install both
+backend and frontend dependencies:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine\backend'
-python -m venv venv
-.\venv\Scripts\python.exe -m pip install -r requirements.txt
-
-Set-Location 'D:\incubrix\ps2-video-engine\frontend'
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 npm install
 ```
 
@@ -87,8 +73,8 @@ $env:GEMINI_API_KEY = "your-gemini-api-key"
 Open **Terminal 1** and run:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine\backend'
-.\venv\Scripts\uvicorn.exe main:app --reload --port 8000
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
 ```
 
 The backend API will be at: http://127.0.0.1:8000
@@ -101,12 +87,14 @@ The app shows whether Gemini is configured. If you open a new terminal, set
 Open **Terminal 2** and run:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine\frontend'
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
 npm run dev -- --host 127.0.0.1
 ```
 
 The app will open at: http://127.0.0.1:5173
 
+If the backend uses a different port than 8000, set `BACKEND_TARGET` in the frontend
+terminal before starting Vite (for example, `$env:BACKEND_TARGET = "http://127.0.0.1:8100"`).
 The backend checks standard WinGet install folders for FFmpeg. Otherwise, ensure both
 `ffmpeg.exe` and `ffprobe.exe` are available on `PATH`. Check their availability at
 `http://127.0.0.1:8000/health`.
@@ -191,21 +179,21 @@ Typical API workflow:
 Run the focused backend unit tests:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine\backend'
-.\venv\Scripts\python.exe -m unittest discover -s tests -v
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
+.\.venv\Scripts\python.exe -m unittest discover -s . -p 'test*.py' -v
 ```
 
 Run the upload → edit → download end-to-end check while both servers are running:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine'
-.\backend\venv\Scripts\python.exe .\test_e2e.py
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
+.\.venv\Scripts\python.exe .\test_e2e.py
 ```
 
 Check the production frontend build:
 
 ```powershell
-Set-Location 'D:\incubrix\ps2-video-engine\frontend'
+Set-Location 'D:\incubrix\prompt-based-video-editing-engine'
 npm run build
 ```
 

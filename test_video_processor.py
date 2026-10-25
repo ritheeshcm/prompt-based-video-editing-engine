@@ -13,7 +13,7 @@ from app.video_processor import (
 )
 
 
-PROJECT_DIR = Path(__file__).resolve().parents[2]
+PROJECT_DIR = Path(__file__).resolve().parent
 
 
 class VideoProcessorTests(unittest.TestCase):

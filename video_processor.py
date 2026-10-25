@@ -19,27 +19,31 @@ from app.prompt_parser import EditOperation, ParseResult
 
 def _find_ffmpeg() -> str:
     """Find ffmpeg binary — checks PATH first, then common Windows install paths."""
-    if shutil.which("ffmpeg"):
-        return "ffmpeg"
-    
+    ffmpeg_path = shutil.which("ffmpeg")
+    if ffmpeg_path:
+        return ffmpeg_path
+
     candidates = [
         r"C:\ffmpeg\bin\ffmpeg.exe",
         r"C:\Program Files\ffmpeg\bin\ffmpeg.exe",
         r"C:\ProgramData\chocolatey\bin\ffmpeg.exe",
         str(Path.home() / "scoop" / "shims" / "ffmpeg.exe"),
-        str(Path(os.environ.get("LOCALAPPDATA", "")) / "Microsoft" / "WinGet" / "Packages" / "Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe" / "ffmpeg-7.1-full_build" / "bin" / "ffmpeg.exe"),
     ]
-    # Also search winget installs dynamically
+
     winget_base = Path(os.environ.get("LOCALAPPDATA", "")) / "Microsoft" / "WinGet" / "Packages"
     if winget_base.exists():
         for pkg in winget_base.iterdir():
-            if "ffmpeg" in pkg.name.lower() or "Gyan" in pkg.name:
+            if "ffmpeg" in pkg.name.lower() or "gyan" in pkg.name.lower():
                 for ffmpeg_exe in pkg.rglob("ffmpeg.exe"):
                     candidates.append(str(ffmpeg_exe))
 
+        # Also cover the default WinGet FFmpeg package layout.
+        for ffmpeg_exe in winget_base.glob("**/ffmpeg.exe"):
+            candidates.append(str(ffmpeg_exe))
+
     for path in candidates:
         if Path(path).exists():
-            return path
+            return str(Path(path).resolve())
 
     return "ffmpeg"  # Fallback — will raise if not found
 

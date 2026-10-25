@@ -32,7 +32,7 @@ from app.prompt_parser import parse_prompt
 from app.video_processor import VideoProbeError, check_ffmpeg, probe_video, process_video
 
 # ─── Directories ─────────────────────────────────────────────────────────────
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "outputs"
 UPLOAD_DIR.mkdir(exist_ok=True)
