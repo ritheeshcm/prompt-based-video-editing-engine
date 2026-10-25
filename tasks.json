@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "PS2 Backend",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Set-Location 'D:\\incubrix\\ps2-video-engine\\backend'; & '.\\venv\\Scripts\\uvicorn.exe' main:app --reload --port 8000"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "PS2 Frontend",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Set-Location 'D:\\incubrix\\ps2-video-engine\\frontend'; npm run dev -- --host 127.0.0.1"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "PS2 Frontend Dev Server",
+			"type": "shell",
+			"command": "Set-Location 'D:\\incubrix\\ps2-video-engine\\frontend'; npm run dev -- --host 0.0.0.0",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
