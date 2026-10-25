@@ -110,7 +110,8 @@ HTTPS origin.
 2. In Render, choose **New + → Blueprint**, select the repository, and apply the
    `render.yaml` configuration. This creates a new Docker web service named
    `prompt-video-engine-app`; it does not convert an existing Static Site service.
-   Use the new web service URL after deployment.
+   Use the new web service URL after deployment; the existing Static Site URL will
+   continue serving its old deployment until you replace or remove that service.
 3. If you want Gemini chat and generative edits, add `GEMINI_API_KEY` in the
    service's Render environment settings. Standard supported edits work without it.
 4. Wait for the deployment to finish, then open the `onrender.com` URL. Check
