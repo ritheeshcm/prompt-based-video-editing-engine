@@ -434,3 +434,9 @@ async def delete_job(job_id: str):
                 if p.exists():
                     p.unlink()
     return {"deleted": job_id}
+
+
+# Serve the production Vite build when it exists; local development uses Vite's dev server.
+FRONTEND_DIST_DIR = BASE_DIR / "dist"
+if FRONTEND_DIST_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST_DIR), html=True), name="frontend")

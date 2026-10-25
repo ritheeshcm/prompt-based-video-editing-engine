@@ -99,6 +99,30 @@ The backend checks standard WinGet install folders for FFmpeg. Otherwise, ensure
 `ffmpeg.exe` and `ffprobe.exe` are available on `PATH`. Check their availability at
 `http://127.0.0.1:8000/health`.
 
+## ☁️ Deploy to Render
+
+This repository includes a Render Blueprint and a Dockerfile for deploying the
+frontend and backend as one web service. The container builds the React frontend,
+installs FFmpeg, and serves the production frontend and FastAPI routes on the same
+HTTPS origin.
+
+1. Push the repository to GitHub.
+2. In Render, choose **New + → Blueprint**, select the repository, and apply the
+   `render.yaml` configuration. This creates a new Docker web service named
+   `prompt-video-engine-app`; it does not convert an existing Static Site service.
+   Use the new web service URL after deployment.
+3. If you want Gemini chat and generative edits, add `GEMINI_API_KEY` in the
+   service's Render environment settings. Standard supported edits work without it.
+4. Wait for the deployment to finish, then open the `onrender.com` URL. Check
+   `<your-service-url>/health`; it should return `"status": "ok"` and report FFmpeg
+   and FFprobe as available.
+
+The service uses Render's ephemeral filesystem and keeps jobs in memory. Uploaded
+videos, generated outputs, and jobs will not survive a service restart or instance
+replacement. Configure persistent storage and durable job storage before using this
+for data that must be retained. Free instances may sleep when idle, so the first
+request after inactivity can take longer.
+
 ---
 
 ## 🧠 Supported Prompts
@@ -204,6 +228,7 @@ npm run build
 - **Upload rejected:** use a supported video container under 500 MB; files must contain a readable video stream.
 - **Chat says Gemini is unavailable:** standard supported edits can still be previewed with the local parser. Configure `GEMINI_API_KEY` for broader natural-language interpretation and generative edits.
 - **Prompt preview unavailable:** check that the Vite proxy can reach `http://127.0.0.1:8000`; `/chat-preview` and `/parse-preview` must be proxied to the backend. Unsupported or invalid operations are shown before processing.
+- **Render homepage or API returns 404:** deploy the repository as a Docker web service using its `render.yaml` Blueprint, not as a static site. Check the deployment logs and `/health`.
 - **Job not found after a restart:** jobs are held in memory; upload the source again to create a new job.
 
 ---

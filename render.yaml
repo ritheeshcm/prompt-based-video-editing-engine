@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: prompt-video-engine-app
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
